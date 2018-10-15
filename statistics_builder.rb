@@ -1,4 +1,4 @@
-# ჩვენი მიზანია გავიგოთ, კვირის რომელი დღეები და საათები (ერთ საათიანი დიაპაზონებით) არის გამარჯვებული. ანუ გვესმოდეს რომელ დღეებში და საათებში ხდება ყველაზე მეტი და ნაკლები შემოწირულობები.
+ # ჩვენი მიზანია გავიგოთ, კვირის რომელი დღეები და საათები (ერთ საათიანი დიაპაზონებით) არის გამარჯვებული. ანუ გვესმოდეს რომელ დღეებში და საათებში ხდება ყველაზე მეტი და ნაკლები შემოწირულობები.
 
 # 1. ორშაბათიდან კვირის ჩათვლით ყოველ დღეს მივანიჭოთ რეიტინგი.
 # მაგალითად პირველ კვირაში ტრანზაქციების რაოდენობით მოიგო ორშაბათმა (და მივანიჭოთ 7 ქულა - 7 დღეა კვირაში;),
@@ -58,7 +58,6 @@ unless File.file?(workbook_path)
 end
 
 workbook = RubyXL::Parser.parse(workbook_path)
-worksheet = workbook[0]
 days_of_the_week_ratings = Date::DAYNAMES.map { |d| [d, 0] }.to_h
 days_of_the_week_hourly_ratings = Date::DAYNAMES.map { |d|
   [d, (0..23).map { |x| [x, 0] }.to_h]
@@ -68,6 +67,7 @@ week_of_the_month_ratings = (1..5).map { |v| [v, 0] }.to_h
 row_counter = 0
 previous_payment_time = nil
 
+worksheet = workbook[0]
 worksheet.each_with_index do |row|
   last_row_index = row.cells.last.row
   next if last_row_index.zero?
@@ -110,16 +110,42 @@ puts "\nსულ შეფასდა #{row_counter} ტრანზაქც�
 
 puts "\n************************"
 puts "რეიტინგი კვირის დღეების მიხედვით:"
-pp days_of_the_week_ratings
+pp   days_of_the_week_ratings
 puts "************************\n"
 
 puts "\n************************"
 puts "რეიტინგი კვირის დღის და საათის მიხედვით:"
-pp days_of_the_week_hourly_ratings
+pp   days_of_the_week_hourly_ratings
 puts "************************\n"
 
 puts "\n************************"
 puts "რეიტინგი კვირების მიხედვით:"
-pp week_of_the_month_ratings
+pp   week_of_the_month_ratings
 puts "************************\n"
 
+worksheet = workbook[1]
+worksheet.each_with_index do |row|
+  if row[0] && days_of_the_week_ratings.has_key?(row[0].value)
+    worksheet[row.cells.last.row][1].change_contents(
+      days_of_the_week_ratings[row[0].value]
+    )
+  end
+
+  if row[3] && week_of_the_month_ratings.has_key?(row[3].value)
+    worksheet[row.cells.last.row][4].change_contents(
+      week_of_the_month_ratings[row[3].value]
+    )
+  end
+end
+
+worksheet[0].cells.each do |cell|
+  if cell && Date::DAYNAMES.include?(cell.value) && !cell.column.eql?(0)
+    (0..23).each do |index|
+      worksheet[index + 1][cell.column].change_contents(
+        days_of_the_week_hourly_ratings[cell.value][index]
+      )
+    end
+  end
+end
+
+workbook.write(workbook_path)
