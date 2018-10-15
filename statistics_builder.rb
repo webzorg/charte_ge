@@ -96,7 +96,7 @@ worksheet.each_with_index do |row|
     days_of_the_week_hourly_ratings[date.weekday_name][date.hour] += 1
     week_of_the_month_ratings[(date.day / 7.0).ceil] += 1
 
-    worksheet.add_cell(last_row_index, 3, "✓")
+    # worksheet.add_cell(last_row_index, 3, "✓")
     worksheet.change_row_fill(last_row_index, "f5dc28")
     row_counter += 1
   end
