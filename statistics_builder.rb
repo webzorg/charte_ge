@@ -72,7 +72,7 @@ worksheet.each_with_index do |row|
   last_row_index = row.cells.last.row
   next if last_row_index.zero?
 
-  next if row[1].value.eql?("Giorgi Jibla")
+  next if row[3].value.eql?("Giorgi Jibla")
 
   date = begin
            DateTime.strptime("#{row[0].value} +0400", "%m/%d/%Y %H:%M:%S %p %z")
