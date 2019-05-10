@@ -31,7 +31,7 @@
 # ხოდა ვინაიდან ეგენიც ავტომატური ჩამოჭრებია მაგათი გათვალისწინებაც არ გვინდა. გათვალისწინება გვინდა მხოლოდ ტრანზაქციების
 # რომლებიც არა-ავტომატურია და დონორის მიერ არის განხორციელებული.
 
-require "rubyXL" # Assuming rubygems is already required
+require "rubyXL" # "3.3.29" # Assuming rubygems is already required
 require "date"
 
 class Date
