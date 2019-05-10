@@ -75,6 +75,11 @@ worksheet.each_with_index do |row|
 
   next if row[3].value.eql?("Giorgi Jibla")
 
+  unless row[2].value.eql?("Complete")
+    worksheet.change_row_fill(last_row_index, "ffa5a5")
+    next
+  end
+
   date = begin
            DateTime.strptime("#{row[0].value} +0400", "%m/%d/%Y %H:%M:%S %p %z")
          rescue ArgumentError
